@@ -1,10 +1,15 @@
 package com.erickcg.Parcial2.services.implementation;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+//import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.erickcg.Parcial2.models.dtos.SearchSongDTO;
@@ -43,22 +48,33 @@ public class SongImpl implements ISong {
 	}
 
 	@Override
-	public List<SongDto> allSong(SearchSongDTO info) {
-		List<Song> songs;
-
-		if (info.getTitle() == null) {
-			songs = songRepo.findAll();
-
-			List<SongDto> transformation = recorrerLista(songs);
-			return transformation;
+	public Page<Song> allSong(SearchSongDTO info, int page, int size) {
+		
+		//declaro una lista de tipo page que sera donde guarde lo que me devuelve la lista 
+//		Page<Song> songs;
+	
+		//cambie la condicion del if
+		if (info.getTitle().isEmpty()) {
+			Pageable pageable = PageRequest.of(page, size, Sort.by("code")); 
+			return songRepo.findAll(pageable);
 			
 		} else {
-			songs = songRepo.findByTitleContains(info.getTitle());
-			List<SongDto> transformation = recorrerLista(songs);
-			return transformation;
+			Pageable pageable = PageRequest.of(page, size, Sort.by("code")); 
+//			List<Song> song;
+			
+//			List<SongDto> transformation = recorrerLista(song);
+			return songRepo.findByTitleContains(info.getTitle(), pageable);
 			
 		}
 
 	}
+
+//	@Override
+//	public Page<Song> page(int page, int size) {
+//		Pageable pageable = PageRequest.of(page, size, Sort.by("code").descending());
+//		return songRepo.findAll(pageable);
+//	}
+	
+	
 
 }
