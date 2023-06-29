@@ -52,14 +52,14 @@ public class SongImpl implements ISong {
 		
 		//declaro una lista de tipo page que sera donde guarde lo que me devuelve la lista 
 //		Page<Song> songs;
-	
+		Pageable pageable = PageRequest.of(page, size, Sort.by("title"));
 		//cambie la condicion del if
 		if (info.getTitle().isEmpty()) {
-			Pageable pageable = PageRequest.of(page, size, Sort.by("code")); 
+			 
 			return songRepo.findAll(pageable);
 			
 		} else {
-			Pageable pageable = PageRequest.of(page, size, Sort.by("code")); 
+//			Pageable pageable = PageRequest.of(page, size); 
 //			List<Song> song;
 			
 //			List<SongDto> transformation = recorrerLista(song);

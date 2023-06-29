@@ -7,6 +7,4 @@ import com.erickcg.Parcial2.models.entities.Song;
 
 public interface ISong {
 	Page<Song> allSong(SearchSongDTO info, int page, int size);
-	
-//	Page<Song> page(int page,int size);
 }

@@ -1,6 +1,6 @@
 package com.erickcg.Parcial2.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.erickcg.Parcial2.models.dtos.SaveUserDto;
 import com.erickcg.Parcial2.models.dtos.SearchPlaylistDTO;
@@ -11,7 +11,7 @@ import com.erickcg.Parcial2.models.entities.User;
 
 public interface IUser {
 	void save(SaveUserDto info) throws Exception;
-	List<Playlist> searchUserPlaylist(SearchPlaylistDTO info, String username);
+	Page<Playlist> searchUserPlaylist(SearchPlaylistDTO info, String username, int page, int size);
 	
 //	metodos del taller
 	Token registerToken(User user) throws Exception;

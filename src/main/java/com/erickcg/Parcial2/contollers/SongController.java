@@ -92,24 +92,4 @@ public class SongController {
 
 			return newSong;
 		}
-	
-	
-	
-	
-//	@GetMapping("pageable")
-//	public ResponseEntity<?> pageable(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size){
-//		Page<Song> songs = songServices.page(page, size);
-//		
-//		List<SongDto> songsFormat =recorrerLista(songs.getContent());
-//		PageDTO<Song> response = new PageDTO<>(
-//				songsFormat,
-//				songs.getNumber(),
-//				songs.getSize(),
-//				songs.getTotalElements(),
-//				songs.getTotalPages()
-//				);
-//		return new ResponseEntity<>(response, HttpStatus.OK);
-//	}
-
-
 }

@@ -1,8 +1,7 @@
 package com.erickcg.Parcial2.contollers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,15 +10,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erickcg.Parcial2.models.entities.User;
 import com.erickcg.Parcial2.models.dtos.MessageDTO;
+import com.erickcg.Parcial2.models.dtos.PageDTO;
 import com.erickcg.Parcial2.models.dtos.SaveUserDto;
 import com.erickcg.Parcial2.models.dtos.SearchPlaylistDTO;
 import com.erickcg.Parcial2.models.dtos.TokenDTO;
 import com.erickcg.Parcial2.models.dtos.UserLoginDTO;
 import com.erickcg.Parcial2.models.entities.Playlist;
+import com.erickcg.Parcial2.models.entities.Song;
 import com.erickcg.Parcial2.models.entities.Token;
 import com.erickcg.Parcial2.services.IUser;
 import com.erickcg.Parcial2.utils.JWTTools;
@@ -63,7 +65,8 @@ public class UserController {
 
 	@GetMapping("/user/playlist")
 	public ResponseEntity<?> playlistByUser(@RequestBody @Valid SearchPlaylistDTO info, HttpServletRequest request,
-			BindingResult validations) {
+			BindingResult validations, @RequestParam(defaultValue = "0") int page, 
+			@RequestParam(defaultValue = "5") int size) {
 		// obtengo el toquen de los headers de la peticion
 		String tokenHeader = request.getHeader("Authorization");
 		String token = tokenHeader.substring(7);
@@ -74,13 +77,24 @@ public class UserController {
 		}
 
 		try {
-			List<Playlist> play = userServices.searchUserPlaylist(info, username);
+			Page<Playlist> play = userServices.searchUserPlaylist(info, username, page, size);
+			
 			if (play == null) {
 				return new ResponseEntity<>("El usuario no tiene listas creadas", HttpStatus.OK);
 			}
 
 			if (!play.isEmpty()) {
-				return new ResponseEntity<>(play, HttpStatus.OK);
+				//lleno el DTO 
+				PageDTO<Song> response = new PageDTO<>(
+						play.getContent(),
+						play.getNumber(),
+						play.getSize(),
+						play.getTotalElements(),
+						play.getTotalPages()
+						);
+				
+				
+				return new ResponseEntity<>(response, HttpStatus.OK);
 			} else if (play.isEmpty()) {
 				return new ResponseEntity<>("El usuario no tiene listas creadas con ese nombre", HttpStatus.OK);
 			} else {

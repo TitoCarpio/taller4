@@ -3,6 +3,10 @@ package com.erickcg.Parcial2.services.implementation;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,13 +54,25 @@ public class UserSImpl implements IUser {
 	}
 
 	@Override
-	public List<Playlist> searchUserPlaylist(SearchPlaylistDTO info, String username) {
+	public Page<Playlist> searchUserPlaylist(SearchPlaylistDTO info, String username, int page, int size) {
+		
+		
 		User user = userRepo.findOneByUsernameOrEmail(username, username);
 		if (user != null && info.getTitle().isEmpty()) {
-			List<Playlist> play = playRepo.findByUser(user);
+			//agrego la paginacion
+			Pageable pageable = PageRequest.of(page, size, Sort.by("title"));
+			
+			
+			Page<Playlist> play = playRepo.findByUser(user, pageable);
+			
+//			System.out.println(playRepo.findByUserAndTitleContains(user, "prueba", pageable));
+			
+			
+			
 			return play;
-		} else if (info.getTitle() != null && user != null) {
-			return playRepo.findByUserAndTitleContains(user, info.getTitle());
+		} else if (!info.getTitle().isEmpty() && user != null) {
+			Pageable pageable = PageRequest.of(page, size, Sort.by("title"));
+			return playRepo.findByUserAndTitleContains(user, info.getTitle(), pageable);
 		}else {
 			return null;
 		}
